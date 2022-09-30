@@ -1,0 +1,13 @@
+Shared resources at sccm.contoso.local
+
+
+
+Share name  Type  Used as  Comment        
+
+-------------------------------------------------------------------------------
+{SHARE*:ADMIN$}      {TYPE:Disk}           Remote Admin   
+C$          Disk           Default share  
+D$          Disk           Default share  
+IPC$        IPC            Remote IPC     
+The command completed successfully.
+

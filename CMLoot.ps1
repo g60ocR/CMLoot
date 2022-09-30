@@ -58,9 +58,9 @@ Enumerates files available on SCCM share and saves it to a file, excludes extens
     }
 
     # Grab all shares on host and fetch all .ini-files SCCMContentLib\DataLib share
-    (net view $SCCMHost /all) | % {
-        if($_.IndexOf(' Disk ') -gt 0){
-            $share = $_.Split('      ')[0]
+    (net view $SCCMHost /all | ConvertFrom-String -TemplateFile .\net-view.template) | ForEach-Object {
+        if($_.Type -eq 'Disk'){
+            $share = $_.Share
 
             if ($share -match 'SCCMContentLib') {
 
@@ -250,7 +250,7 @@ function Invoke-CMLootHunt {
     foreach($line in Get-Content $NoAccessFile) { $ACLSearch += $line }
 
     # Find SCCMContentLib share on SCCM host, check all .INI files in FileLib and match content.
-    (net view $SCCMHost /all) | % {
+    (net view $SCCMHost /all) | ForEach-Object {
         if($_.IndexOf(' Disk ') -gt 0){
             $share = $_.Split('      ')[0]
 
@@ -270,7 +270,7 @@ function Invoke-CMLootHunt {
                                     continue
                                 }
                             # Extract reference to DataLib
-                            $content = (Get-Content -Path $_.FullName | Select -Skip 1) -split "="
+                            $content = (Get-Content -Path $_.FullName | Select-Object -Skip 1) -split "="
 
                             # Match NoAccess against content
                             if ($ACLSearch.contains($content[0])) 
